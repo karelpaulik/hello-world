@@ -1,4 +1,5 @@
 # hello-world
 Hello world despciption
 
-Attempt with github.
+First change: Attempt with github.
+Second change: Paulik
