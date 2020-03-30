@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - glTF loader</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+	</head>
+
+	<body>
+		<script type="module">
+			import * as THREE from '../build/three.module.js';
+			import { OrbitControls } from './jsm/controls/OrbitControls.js';
+			import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
+			import { GUI } from './jsm/libs/dat.gui.module.js';
+			
+			var camera, scene, renderer, controls, loader;
+
+			camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.25, 20 );
+			camera.position.set( 1, 1, 1 );
+
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color(0x606060);			
+			
+			//AmbientLight - prakticky to není zdroj světla.
+			//Není směr, žádné stíny. Pouze násobí barvu materiálu.
+			var ambientColor = 0xFFFFFF;
+			var ambientIntensity = 0.5;
+			var ambientLight = new THREE.AmbientLight(ambientColor, ambientIntensity);
+			scene.add(ambientLight);			
+				
+			var gui = new GUI();
+			gui.add(ambientLight, 'intensity', 0, 2, 0.1);
+			
+			//HemisphereLight - definuje barvu oblohy a země.
+			var skyColor = 'white';
+			var groundColor = 'white';
+			var hemisphereIntensity = 1;
+			var hemisphereLight = new THREE.HemisphereLight(skyColor, groundColor, hemisphereIntensity);
+			scene.add(hemisphereLight);
+			
+			//DirectionalLight, často náhrada slunce, všechny paprsky jsou rovnoběžné
+			var directionalColor = 0xFFFFFF;
+			var directionalIntensity = 1;
+			var directionalLight = new THREE.DirectionalLight( directionalColor, directionalIntensity );
+			directionalLight.position.set( 1, 1, 1 ); //Od kud světlo svítí
+			//directionalLight.target.position.set( 1, 0, 0 ); //Směr, kam svítí. Def=0,0,0
+			scene.add( directionalLight );
+			//scene.add(directionalLight.target);			
+			
+			//DirectionalLight, často náhrada slunce, všechny paprsky jsou rovnoběžné
+			var directionalColor = 0xFFFFFF;
+			var directionalIntensity = 1;
+			var directionalLight2 = new THREE.DirectionalLight( directionalColor, directionalIntensity );
+			directionalLight2.position.set( -1, -1, -1 ); //Od kud světlo svítí
+			//directionalLight.target.position.set( 1, 0, 0 ); //Směr, kam svítí. Def=0,0,0
+			scene.add( directionalLight2 );
+			//scene.add(directionalLight.target);				
+			
+			/*var dirLightHeper = new THREE.DirectionalLightHelper( directionalLight, 1 );
+			scene.add( dirLightHeper );*/
+					
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			controls = new OrbitControls( camera, renderer.domElement );
+			controls.addEventListener( 'change', render ); // use if there is no animation loop			
+			
+			loader = new GLTFLoader();
+			loader.load( 'models/gltf/1012053_04.gltf', function ( gltf ) {
+				scene.add( gltf.scene );
+				console.log(gltf.scene);
+				render();
+			} );
+
+			//render();
+			animate();
+			
+			function render() {
+				renderer.render( scene, camera );
+			}				
+			
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+
+		</script>
+	</body>
+</html>
