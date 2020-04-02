@@ -82,8 +82,10 @@
 				render();
 			} );
 
-			//render();
-			animate();
+			window.addEventListener( 'resize', onWindowResize, false );
+			
+			render();
+			//animate();
 			
 			let btn_zmena_modelu = document.getElementById("btn_zmena_modelu");
 			btn_zmena_modelu.onclick = function() {
@@ -102,6 +104,13 @@
 			
 			function animate() {
 				requestAnimationFrame( animate );
+				render();
+			}
+			
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
 				render();
 			}
 
